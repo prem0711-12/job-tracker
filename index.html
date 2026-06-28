@@ -5,287 +5,459 @@
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Prem's Job Tracker — L2 Support Europe</title>
 <style>
-  :root{--blue:#1a3c6e;--lb:#e8eef7;--green:#16a34a;--lg:#dcfce7;--orange:#d97706;--lo:#fef3c7;--red:#dc2626;--lr:#fee2e2;--gray:#6b7280;--dark:#111827;--border:#e5e7eb}
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:'Segoe UI',Arial,sans-serif;background:#f3f6fb;color:var(--dark);min-height:100vh}
-  header{background:var(--blue);color:#fff;padding:1.2rem 2rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
-  header h1{font-size:1.3rem;font-weight:700}
-  header p{font-size:.85rem;opacity:.8}
-  .badge{background:#fff2;border-radius:99px;padding:4px 14px;font-size:.8rem;color:#fff}
-  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;padding:1.2rem 2rem}
-  .stat{background:#fff;border-radius:12px;padding:1rem;text-align:center;box-shadow:0 1px 4px #0001;border-top:3px solid var(--blue)}
-  .stat .num{font-size:2rem;font-weight:700;color:var(--blue)}
-  .stat .lbl{font-size:.75rem;color:var(--gray);margin-top:4px}
-  .section{padding:0 2rem 1.2rem}
-  .section h2{font-size:1rem;font-weight:700;color:var(--blue);margin-bottom:.8rem;display:flex;align-items:center;gap:8px}
-  .profile-bar{background:#fff;border-radius:12px;padding:1.2rem;box-shadow:0 1px 4px #0001;margin-bottom:1.2rem}
-  .profile-bar h3{font-size:.9rem;font-weight:700;margin-bottom:.8rem;color:var(--blue)}
-  .skill-row{display:flex;align-items:center;gap:12px;margin-bottom:8px;flex-wrap:wrap}
-  .skill-lbl{width:200px;font-size:.82rem;color:var(--dark);flex-shrink:0}
-  .bar-wrap{flex:1;min-width:120px;background:#e5e7eb;border-radius:99px;height:9px;overflow:hidden}
-  .bar{height:100%;border-radius:99px;transition:width .6s}
-  .skill-pct{font-size:.8rem;font-weight:700;width:38px;text-align:right}
-  .ats-box{background:var(--lb);border-radius:12px;padding:1rem;margin-bottom:1rem}
-  .ats-box h3{font-size:.9rem;font-weight:700;color:var(--blue);margin-bottom:.6rem}
-  .ats-tags{display:flex;flex-wrap:wrap;gap:6px}
-  .tag{font-size:.75rem;padding:3px 10px;border-radius:99px;font-weight:500}
-  .tag.pass{background:var(--lg);color:var(--green)}
-  .tag.warn{background:var(--lo);color:var(--orange)}
-  .tag.miss{background:var(--lr);color:var(--red)}
-  .companies{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
-  .card{background:#fff;border-radius:12px;padding:1.1rem;box-shadow:0 1px 4px #0001;border-left:4px solid var(--blue);position:relative;transition:box-shadow .2s}
-  .card:hover{box-shadow:0 4px 16px #1a3c6e22}
-  .card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:6px}
-  .card-name{font-weight:700;font-size:.95rem;color:var(--dark)}
-  .card-country{font-size:.75rem;color:var(--gray)}
-  .match-badge{font-size:.78rem;font-weight:700;padding:3px 10px;border-radius:99px;white-space:nowrap}
-  .high{background:var(--lg);color:var(--green)}
-  .med{background:var(--lo);color:var(--orange)}
-  .low{background:var(--lr);color:var(--red)}
-  .card-desc{font-size:.78rem;color:var(--gray);margin-bottom:8px;line-height:1.5}
-  .card-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}
-  .card-tag{font-size:.7rem;background:var(--lb);color:var(--blue);padding:2px 8px;border-radius:99px}
-  .card-footer{display:flex;gap:6px;flex-wrap:wrap;align-items:center;justify-content:space-between}
-  .salary{font-size:.75rem;color:var(--green);font-weight:600}
-  .btn-row{display:flex;gap:6px;flex-wrap:wrap}
-  .btn{font-size:.75rem;padding:5px 12px;border-radius:8px;border:none;cursor:pointer;font-weight:600;text-decoration:none;display:inline-block;transition:opacity .15s}
-  .btn:hover{opacity:.85}
-  .btn-career{background:var(--blue);color:#fff}
-  .btn-log{background:var(--lg);color:var(--green)}
-  .applied{border-left-color:#9ca3af;opacity:.7}
-  .applied-tag{position:absolute;top:10px;right:10px;font-size:.7rem;background:var(--gray);color:#fff;padding:2px 8px;border-radius:99px}
-  .filter-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;align-items:center}
-  .filter-btn{font-size:.78rem;padding:5px 14px;border-radius:99px;border:1.5px solid var(--border);background:#fff;cursor:pointer;font-weight:500;transition:all .15s}
-  .filter-btn.active{background:var(--blue);color:#fff;border-color:var(--blue)}
-  .search{padding:6px 14px;border-radius:99px;border:1.5px solid var(--border);font-size:.82rem;outline:none;min-width:180px}
-  .search:focus{border-color:var(--blue)}
-  .toast{position:fixed;bottom:24px;right:24px;background:var(--green);color:#fff;padding:10px 20px;border-radius:10px;font-size:.85rem;font-weight:600;z-index:999;display:none;animation:fadeIn .3s}
-  @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-  .tip{font-size:.75rem;color:var(--gray);margin-top:4px}
-  .sheet-link{display:inline-flex;align-items:center;gap:6px;font-size:.82rem;color:var(--blue);text-decoration:none;font-weight:600;padding:6px 14px;border:1.5px solid var(--blue);border-radius:8px;margin-bottom:1rem}
-  .sheet-link:hover{background:var(--lb)}
-  @media(max-width:600px){.stats{padding:1rem}.section{padding:0 1rem 1rem}header{padding:1rem}.skill-lbl{width:140px}}
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0f2444;--blue:#1a56db;--lb:#dbeafe;--sky:#e0f2fe;
+  --green:#16a34a;--lg:#dcfce7;--amber:#d97706;--la:#fef3c7;
+  --red:#dc2626;--lr:#fee2e2;--gray:#6b7280;--dark:#0f172a;
+  --border:#e2e8f0;--card:#ffffff;--bg:#f8fafc
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--dark);min-height:100vh}
+
+/* HEADER */
+header{background:linear-gradient(135deg,var(--navy) 0%,#1e3a6e 60%,#1a56db 100%);color:#fff;padding:1.4rem 2rem 1rem;position:relative;overflow:hidden}
+header::before{content:'';position:absolute;top:-40px;right:-40px;width:200px;height:200px;background:rgba(255,255,255,.04);border-radius:50%}
+header::after{content:'';position:absolute;bottom:-60px;right:80px;width:140px;height:140px;background:rgba(255,255,255,.03);border-radius:50%}
+.header-inner{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;position:relative;z-index:1}
+.header-title h1{font-size:1.35rem;font-weight:700;letter-spacing:-.3px}
+.header-title p{font-size:.8rem;opacity:.7;margin-top:3px}
+.header-badges{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.hbadge{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:99px;padding:4px 14px;font-size:.75rem;color:#fff;backdrop-filter:blur(4px)}
+.hbadge.green{background:rgba(22,163,74,.25);border-color:rgba(22,163,74,.4)}
+.pulse{display:inline-block;width:7px;height:7px;background:#4ade80;border-radius:50%;margin-right:5px;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;padding:1.2rem 2rem}
+.stat{background:#fff;border-radius:14px;padding:.9rem 1rem;text-align:center;box-shadow:0 1px 3px #0001;border:1px solid var(--border);transition:transform .2s,box-shadow .2s;cursor:default}
+.stat:hover{transform:translateY(-2px);box-shadow:0 4px 16px #1a56db15}
+.stat .num{font-size:1.8rem;font-weight:800;color:var(--blue);line-height:1}
+.stat .lbl{font-size:.7rem;color:var(--gray);margin-top:4px;text-transform:uppercase;letter-spacing:.5px}
+
+/* TWO-COL SECTION */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:0 2rem 1.2rem}
+@media(max-width:768px){.two-col{grid-template-columns:1fr}}
+.panel{background:#fff;border-radius:16px;padding:1.2rem;box-shadow:0 1px 3px #0001;border:1px solid var(--border)}
+.panel-title{font-size:.8rem;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.8px;margin-bottom:1rem;display:flex;align-items:center;gap:6px}
+
+/* SKILL BARS */
+.skill-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.skill-lbl{font-size:.75rem;color:var(--dark);width:170px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-wrap{flex:1;background:#f1f5f9;border-radius:99px;height:7px;overflow:hidden}
+.bar{height:100%;border-radius:99px;transition:width 1s cubic-bezier(.4,0,.2,1)}
+.skill-pct{font-size:.72rem;font-weight:700;width:30px;text-align:right}
+
+/* GITHUB LINKS */
+.gh-link{display:flex;align-items:center;gap:10px;padding:.7rem .9rem;border-radius:10px;border:1.5px solid var(--border);margin-bottom:8px;text-decoration:none;transition:all .2s;background:#fff}
+.gh-link:hover{border-color:var(--blue);background:var(--lb);transform:translateX(3px)}
+.gh-icon{width:32px;height:32px;background:var(--navy);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.gh-icon svg{width:18px;height:18px;fill:#fff}
+.gh-info{flex:1}
+.gh-name{font-size:.82rem;font-weight:700;color:var(--dark)}
+.gh-desc{font-size:.7rem;color:var(--gray);margin-top:1px}
+.gh-arrow{font-size:1rem;color:var(--blue);opacity:0;transition:opacity .2s}
+.gh-link:hover .gh-arrow{opacity:1}
+.cert-chip{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;background:var(--lg);border-radius:8px;font-size:.72rem;color:var(--green);font-weight:600;margin-top:4px;text-decoration:none}
+
+/* ATS TAGS */
+.ats-section{padding:0 2rem 1rem}
+.ats-box{background:#fff;border-radius:14px;padding:1rem 1.2rem;border:1px solid var(--border)}
+.ats-row{margin-bottom:.7rem}
+.ats-label{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+.tags{display:flex;flex-wrap:wrap;gap:4px}
+.tag{font-size:.7rem;padding:3px 9px;border-radius:99px;font-weight:500}
+.tag.p{background:var(--lg);color:var(--green)}
+.tag.w{background:var(--la);color:var(--amber)}
+.tag.m{background:var(--lr);color:var(--red)}
+
+/* FILTERS */
+.section{padding:0 2rem 1.2rem}
+.sec-title{font-size:.85rem;font-weight:700;color:var(--navy);margin-bottom:.8rem;display:flex;align-items:center;gap:6px}
+.filter-bar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1rem;align-items:center}
+.fbtn{font-size:.72rem;padding:5px 13px;border-radius:99px;border:1.5px solid var(--border);background:#fff;cursor:pointer;font-weight:600;transition:all .15s;color:var(--gray)}
+.fbtn:hover,.fbtn.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.fsearch{padding:6px 14px;border-radius:99px;border:1.5px solid var(--border);font-size:.78rem;outline:none;min-width:160px;transition:border .2s}
+.fsearch:focus{border-color:var(--blue)}
+
+/* CARDS */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.card{background:#fff;border-radius:14px;padding:1rem;border:1px solid var(--border);position:relative;transition:all .2s;cursor:default}
+.card:hover{transform:translateY(-3px);box-shadow:0 8px 24px #1a56db18;border-color:var(--blue)}
+.card.applied{opacity:.6;border-style:dashed}
+.card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:6px;margin-bottom:5px}
+.card-name{font-weight:700;font-size:.9rem;color:var(--dark)}
+.card-country{font-size:.7rem;color:var(--gray);margin-top:1px}
+.mbadge{font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:99px;white-space:nowrap;flex-shrink:0}
+.mbadge.high{background:var(--lg);color:var(--green)}
+.mbadge.med{background:var(--la);color:var(--amber)}
+.mbadge.low{background:var(--lr);color:var(--red)}
+.card-desc{font-size:.75rem;color:var(--gray);margin-bottom:8px;line-height:1.5}
+.card-tags{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:8px}
+.ctag{font-size:.67rem;background:var(--sky);color:#0369a1;padding:2px 7px;border-radius:99px;font-weight:500}
+.card-footer{display:flex;gap:5px;flex-wrap:wrap;align-items:center;justify-content:space-between;border-top:1px solid var(--border);padding-top:8px;margin-top:4px}
+.salary{font-size:.73rem;color:var(--green);font-weight:700}
+.btn-row{display:flex;gap:5px}
+.btn{font-size:.7rem;padding:5px 11px;border-radius:8px;border:none;cursor:pointer;font-weight:700;text-decoration:none;display:inline-block;transition:all .15s}
+.btn:hover{filter:brightness(.9);transform:translateY(-1px)}
+.btn-c{background:var(--navy);color:#fff}
+.btn-l{background:var(--lg);color:var(--green)}
+.app-tag{position:absolute;top:8px;right:8px;font-size:.65rem;background:var(--gray);color:#fff;padding:2px 7px;border-radius:99px}
+
+/* AI SECTION */
+.ai-section{padding:0 2rem 1.2rem}
+.ai-box{background:linear-gradient(135deg,#0f2444,#1a3c6e);border-radius:16px;padding:1.2rem;color:#fff}
+.ai-box h3{font-size:.9rem;font-weight:700;margin-bottom:.4rem}
+.ai-box p{font-size:.75rem;opacity:.7;margin-bottom:.8rem;line-height:1.5}
+.ai-controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.ai-btn{padding:7px 16px;border-radius:10px;border:none;cursor:pointer;font-size:.78rem;font-weight:700;transition:all .2s}
+.ai-btn.primary{background:#1a56db;color:#fff}
+.ai-btn.primary:hover{background:#1d4ed8}
+.ai-btn:disabled{opacity:.5;cursor:not-allowed}
+.ai-status{font-size:.72rem;color:rgba(255,255,255,.6);margin-top:.5rem}
+.ai-timer{font-size:.7rem;color:rgba(255,255,255,.5);margin-top:3px}
+.ai-result{margin-top:.8rem;background:rgba(255,255,255,.07);border-radius:10px;padding:.8rem;font-size:.75rem;color:rgba(255,255,255,.85);line-height:1.7;max-height:160px;overflow-y:auto;display:none}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* TOAST */
+.toast{position:fixed;bottom:20px;right:20px;background:var(--green);color:#fff;padding:10px 18px;border-radius:10px;font-size:.8rem;font-weight:700;z-index:999;display:none;animation:slideUp .3s}
+@keyframes slideUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* SHEET BTN */
+.sheet-btn{display:inline-flex;align-items:center;gap:6px;font-size:.78rem;color:var(--blue);text-decoration:none;font-weight:700;padding:6px 14px;border:1.5px solid var(--blue);border-radius:8px;margin-bottom:.8rem;transition:all .2s}
+.sheet-btn:hover{background:var(--lb)}
+
+@media(max-width:600px){
+  .stats{padding:.8rem 1rem}
+  .section,.two-col,.ats-section,.ai-section{padding-left:1rem;padding-right:1rem}
+  header{padding:1rem}
+}
 </style>
 </head>
 <body>
 
 <header>
-  <div>
-    <h1>🎯 Prem's Europe Job Tracker — L2 Application Support</h1>
-    <p>Remote First → Onsite EU | Targeting Germany · Poland · Netherlands & Global Remote</p>
-  </div>
-  <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
-    <span class="badge" id="total-badge">20 companies tracked</span>
-    <span class="badge" id="applied-badge">0 applied</span>
+  <div class="header-inner">
+    <div class="header-title">
+      <h1>🎯 Prem Rathod — L2 Application Support</h1>
+      <p>Europe Job Tracker · Remote First → Onsite EU · Germany · Poland · Netherlands</p>
+    </div>
+    <div class="header-badges">
+      <span class="hbadge"><span class="pulse"></span>Live Tracker</span>
+      <span class="hbadge" id="hb-total">20 companies</span>
+      <span class="hbadge green" id="hb-applied">0 applied</span>
+    </div>
   </div>
 </header>
 
 <!-- STATS -->
 <div class="stats">
-  <div class="stat"><div class="num" id="s-total">20</div><div class="lbl">Companies Listed</div></div>
-  <div class="stat"><div class="num" id="s-high" style="color:var(--green)">12</div><div class="lbl">High Match (75%+)</div></div>
-  <div class="stat"><div class="num" id="s-applied">0</div><div class="lbl">Applied So Far</div></div>
-  <div class="stat"><div class="num" style="color:var(--orange)">76%</div><div class="lbl">Avg Remote Chance</div></div>
-  <div class="stat"><div class="num" style="color:var(--green)">€25–45K</div><div class="lbl">Expected Salary Range</div></div>
+  <div class="stat"><div class="num" id="s1">20</div><div class="lbl">Companies</div></div>
+  <div class="stat"><div class="num" style="color:var(--green)" id="s2">12</div><div class="lbl">High Match</div></div>
+  <div class="stat"><div class="num" id="s3">0</div><div class="lbl">Applied</div></div>
+  <div class="stat"><div class="num" style="color:var(--amber)">76%</div><div class="lbl">Avg Chance</div></div>
+  <div class="stat"><div class="num" style="color:var(--green);font-size:1.3rem">€25–45K</div><div class="lbl">Salary Range</div></div>
 </div>
 
-<!-- PROFILE MATCH -->
-<div class="section">
-  <h2>📊 Profile Match vs L2 Support Requirements</h2>
-  <div class="profile-bar">
-    <h3>How your skills score against typical job requirements</h3>
+<!-- PROFILE + GITHUB TWO COL -->
+<div class="two-col">
+  <!-- LEFT: skill bars -->
+  <div class="panel">
+    <div class="panel-title">📊 Profile Match vs L2 Requirements</div>
     <div id="skill-bars"></div>
   </div>
+  <!-- RIGHT: github repos -->
+  <div class="panel">
+    <div class="panel-title">🔗 GitHub Portfolio</div>
+    <a class="gh-link" href="https://github.com/prem0711-12/production-support-case-studies" target="_blank">
+      <div class="gh-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.42 2.87 8.17 6.84 9.49.5.09.66-.22.66-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.08.63-1.33-2.22-.25-4.56-1.11-4.56-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02A9.56 9.56 0 0112 6.8c.85 0 1.71.11 2.5.34 1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.69-4.57 4.93.36.31.68.92.68 1.85v2.74c0 .27.16.58.67.48A10.01 10.01 0 0022 12c0-5.52-4.48-10-10-10z"/></svg></div>
+      <div class="gh-info">
+        <div class="gh-name">production-support-case-studies</div>
+        <div class="gh-desc">Real L2 investigations — GCP, MySQL, Firebase, Cassandra, Postman</div>
+      </div>
+      <div class="gh-arrow">→</div>
+    </a>
+    <a class="gh-link" href="https://github.com/prem0711-12/sql-support-case-studies" target="_blank">
+      <div class="gh-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.42 2.87 8.17 6.84 9.49.5.09.66-.22.66-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.08.63-1.33-2.22-.25-4.56-1.11-4.56-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02A9.56 9.56 0 0112 6.8c.85 0 1.71.11 2.5.34 1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.69-4.57 4.93.36.31.68.92.68 1.85v2.74c0 .27.16.58.67.48A10.01 10.01 0 0022 12c0-5.52-4.48-10-10-10z"/></svg></div>
+      <div class="gh-info">
+        <div class="gh-name">sql-support-case-studies</div>
+        <div class="gh-desc">SQL investigations — JOINs, GROUP BY, HAVING, real SaaS scenarios</div>
+      </div>
+      <div class="gh-arrow">→</div>
+    </a>
+    <a class="gh-link" href="https://github.com/prem0711-12" target="_blank">
+      <div class="gh-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.42 2.87 8.17 6.84 9.49.5.09.66-.22.66-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.08.63-1.33-2.22-.25-4.56-1.11-4.56-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02A9.56 9.56 0 0112 6.8c.85 0 1.71.11 2.5.34 1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.69-4.57 4.93.36.31.68.92.68 1.85v2.74c0 .27.16.58.67.48A10.01 10.01 0 0022 12c0-5.52-4.48-10-10-10z"/></svg></div>
+      <div class="gh-info">
+        <div class="gh-name">View Full GitHub Profile</div>
+        <div class="gh-desc">github.com/prem0711-12</div>
+      </div>
+      <div class="gh-arrow">→</div>
+    </a>
+    <a class="cert-chip" href="https://verify.skilljar.com/c/2cfpahi3dz64" target="_blank">🏅 Postman API Fundamentals Student Expert — Verified</a>
+    <div style="margin-top:10px">
+      <a class="cert-chip" href="https://linkedin.com/in/premrathodtech" target="_blank" style="background:var(--lb);color:var(--blue)">💼 LinkedIn: premrathodtech</a>
+    </div>
+  </div>
+</div>
 
+<!-- ATS COVERAGE -->
+<div class="ats-section">
   <div class="ats-box">
-    <h3>✅ ATS Keyword Coverage — Your CV passes these</h3>
-    <div class="ats-tags" id="ats-pass"></div>
-    <h3 style="margin-top:10px">⚠️ Partial / Improve</h3>
-    <div class="ats-tags" id="ats-warn"></div>
-    <h3 style="margin-top:10px">❌ Missing (not blockers for L2 but good to add)</h3>
-    <div class="ats-tags" id="ats-miss"></div>
+    <div class="ats-row">
+      <div class="ats-label" style="color:var(--green)">✅ ATS Keywords — Your CV passes these</div>
+      <div class="tags" id="tp"></div>
+    </div>
+    <div class="ats-row">
+      <div class="ats-label" style="color:var(--amber)">⚠️ Partial / Can improve</div>
+      <div class="tags" id="tw"></div>
+    </div>
+    <div class="ats-row" style="margin-bottom:0">
+      <div class="ats-label" style="color:var(--red)">❌ Missing (not blockers for L2)</div>
+      <div class="tags" id="tm"></div>
+    </div>
   </div>
 </div>
 
-<!-- SHEET LINK -->
-<div class="section">
-  <a class="sheet-link" href="https://docs.google.com/spreadsheets/d/1Txg_H-UQxXasJHHC5yJ6TjqRvSuje7MobU-NANG9yIo/edit#gid=0" target="_blank">
-    📋 Open My Application Tracker Sheet
-  </a>
-  <p class="tip">Click "Log Application" on any card below → it will open your sheet + copy company details to clipboard so you can paste them in.</p>
+<!-- AI AGENT -->
+<div class="ai-section">
+  <div class="ai-box">
+    <h3>🤖 AI Company Scout</h3>
+    <p>Click to fetch fresh L2 Support job leads matching your profile. Runs on demand — not automatic — so you control when it searches.</p>
+    <div class="ai-controls">
+      <button class="ai-btn primary" id="ai-btn" onclick="runAIScout()">🔍 Find New Companies</button>
+      <button class="ai-btn" style="background:rgba(255,255,255,.1);color:#fff" onclick="clearAIResult()">Clear</button>
+    </div>
+    <div class="ai-status" id="ai-status">Last run: Never</div>
+    <div class="ai-timer" id="ai-timer"></div>
+    <div class="ai-result" id="ai-result"></div>
+  </div>
 </div>
 
-<!-- COMPANY LIST -->
+<!-- SHEET -->
 <div class="section">
-  <h2>🏢 Target Companies</h2>
+  <a class="sheet-btn" href="https://docs.google.com/spreadsheets/d/1Txg_H-UQxXasJHHC5yJ6TjqRvSuje7MobU-NANG9yIo/edit#gid=0" target="_blank">📋 Open Application Tracker Sheet</a>
+  <p style="font-size:.72rem;color:var(--gray)">Click "Log" on any card → copies details to clipboard → paste into your Sheet</p>
+</div>
+
+<!-- COMPANIES -->
+<div class="section">
+  <div class="sec-title">🏢 Target Companies</div>
   <div class="filter-bar">
-    <button class="filter-btn active" onclick="filter('all',this)">All</button>
-    <button class="filter-btn" onclick="filter('high',this)">🟢 High Match</button>
-    <button class="filter-btn" onclick="filter('germany',this)">🇩🇪 Germany</button>
-    <button class="filter-btn" onclick="filter('poland',this)">🇵🇱 Poland</button>
-    <button class="filter-btn" onclick="filter('netherlands',this)">🇳🇱 Netherlands</button>
-    <button class="filter-btn" onclick="filter('global',this)">🌍 Global Remote</button>
-    <button class="filter-btn" onclick="filter('usd',this)">💵 USD/EUR Pay</button>
-    <input class="search" type="text" placeholder="Search company..." oninput="search(this.value)"/>
+    <button class="fbtn active" onclick="filt('all',this)">All</button>
+    <button class="fbtn" onclick="filt('high',this)">🟢 High Match</button>
+    <button class="fbtn" onclick="filt('germany',this)">🇩🇪 Germany</button>
+    <button class="fbtn" onclick="filt('poland',this)">🇵🇱 Poland</button>
+    <button class="fbtn" onclick="filt('netherlands',this)">🇳🇱 Netherlands</button>
+    <button class="fbtn" onclick="filt('global',this)">🌍 Global</button>
+    <button class="fbtn" onclick="filt('usd',this)">💵 USD Pay</button>
+    <input class="fsearch" type="text" placeholder="Search..." oninput="srch(this.value)"/>
   </div>
-  <div class="companies" id="company-grid"></div>
+  <div class="grid" id="grid"></div>
 </div>
 
-<div class="toast" id="toast">✅ Copied! Paste into your Google Sheet</div>
+<div class="toast" id="toast"></div>
 
 <script>
-const SHEET = "https://docs.google.com/spreadsheets/d/1Txg_H-UQxXasJHHC5yJ6TjqRvSuje7MobU-NANG9yIo/edit#gid=0";
+const SHEET="https://docs.google.com/spreadsheets/d/1Txg_H-UQxXasJHHC5yJ6TjqRvSuje7MobU-NANG9yIo/edit#gid=0";
 
-const skills = [
-  {name:"Production Incident Investigation",pct:90,color:"#16a34a"},
-  {name:"GCP Cloud Logging & Monitoring",pct:82,color:"#16a34a"},
-  {name:"MySQL / SQL (JOINs, filters)",pct:72,color:"#16a34a"},
-  {name:"Firebase Firestore",pct:78,color:"#16a34a"},
-  {name:"Cassandra DB",pct:70,color:"#16a34a"},
-  {name:"Postman REST API Testing",pct:80,color:"#16a34a"},
-  {name:"Jira / ITSM Ticketing",pct:60,color:"#d97706"},
-  {name:"Root Cause Analysis & Documentation",pct:88,color:"#16a34a"},
-  {name:"SLA Management & Escalation",pct:78,color:"#16a34a"},
-  {name:"Python / Scripting",pct:10,color:"#dc2626"},
-  {name:"Power BI / Dashboarding",pct:20,color:"#dc2626"},
-  {name:"Linux / CLI (SSH, SCP, vi, htop)",pct:68,color:"#16a34a"},
+const skills=[
+  {n:"Production Incident Investigation",p:90,c:"#16a34a"},
+  {n:"GCP Cloud Logging & Monitoring",p:82,c:"#16a34a"},
+  {n:"MySQL / SQL (JOINs, GROUP BY)",p:72,c:"#16a34a"},
+  {n:"Firebase Firestore",p:78,c:"#16a34a"},
+  {n:"Cassandra DB",p:70,c:"#16a34a"},
+  {n:"Postman REST API Testing",p:80,c:"#16a34a"},
+  {n:"Linux: SSH, SCP, vi, htop",p:68,c:"#16a34a"},
+  {n:"Root Cause Analysis & Docs",p:88,c:"#16a34a"},
+  {n:"Jira / ITSM Ticketing",p:60,c:"#d97706"},
+  {n:"SLA & Escalation Handling",p:78,c:"#16a34a"},
+  {n:"Python / Scripting",p:10,c:"#dc2626"},
+  {n:"Power BI / Dashboarding",p:20,c:"#dc2626"},
 ];
 
-const atsPass = ["L2 Application Support","Production Support","Root Cause Analysis","GCP Cloud Logging","MySQL","Firebase Firestore","Cassandra","DBeaver","Postman","REST API","Jira","SaaS","SLA","Incident Investigation","Cross-functional escalation","CRM Operations","Slack","API Validation","Log Monitoring","Technical Troubleshooting","SSH Remote Access","Linux CLI","SCP","vi Editor","htop"];
-const atsWarn = ["ITSM","ServiceNow (not used)","Kubernetes (basic awareness)","Monitoring dashboards","Grafana","Linux admin"];
-const atsMiss = ["Python","Power BI / Tableau","Docker","CI/CD awareness","ITIL certified"];
+const atsP=["L2 Application Support","Production Support","Root Cause Analysis","GCP Cloud Logging","MySQL","Firebase Firestore","Cassandra","DBeaver","Postman REST API","Jira","SaaS","SLA","Incident Investigation","Cross-functional Escalation","CRM Operations","SSH Remote Access","Linux CLI","SCP File Transfer","vi Editor","htop","API Validation","Log Monitoring"];
+const atsW=["ITSM","Grafana","Linux Admin","Monitoring Dashboards","ServiceNow"];
+const atsM=["Python","Power BI","Docker","ITIL Certified","Kubernetes"];
 
-const companies = [
-  {id:1,name:"Veeva Systems",country:"🇵🇱 Poland / Global Remote",match:88,level:"high",desc:"Life sciences SaaS giant. Hires Product Support Engineers in Poland. Work Anywhere policy. Real L2 support roles for SaaS platform.",tags:["SaaS","Life Sciences","Support","Work Anywhere"],salary:"€28–42K / USD",currency:"usd",career:"https://careers.veeva.com/job-search-results/?teams=Support",region:"poland",applied:false},
-  {id:2,name:"Mews Systems",country:"🇨🇿 Czech / Remote EU",match:85,level:"high",desc:"Hotel tech SaaS. Strong support engineering culture. Remote-first across EU. Known to hire from India via EOR.",tags:["Hospitality SaaS","Support Engineer","Remote EU"],salary:"€30–40K",currency:"eur",career:"https://www.mews.com/en/careers",region:"global",applied:false},
-  {id:3,name:"Supabase",country:"🌍 Fully Remote / Global",match:82,level:"high",desc:"Open source database platform. Hiring Support Engineers globally. Fully remote, async-first. Pay in USD. PostgreSQL-focused.",tags:["PostgreSQL","Remote Global","Support Engineer"],salary:"USD $40–60K",currency:"usd",career:"https://supabase.com/careers",region:"global",applied:false},
-  {id:4,name:"Checkly",country:"🇩🇪 Germany / Remote",match:80,level:"high",desc:"API & E2E monitoring SaaS. Berlin-based, remote-first. Small team, deep support engineering culture. API monitoring = your Postman skills shine.",tags:["API Monitoring","Germany","Remote","SaaS"],salary:"€30–45K",currency:"eur",career:"https://www.checklyhq.com/jobs/",region:"germany",applied:false},
-  {id:5,name:"Nordhealth",country:"🇫🇮 Finland / Remote EU",match:82,level:"high",desc:"Healthcare SaaS across Nordics. Remote EU roles. Strong support engineering team. Firebase/cloud stack common.",tags:["Healthcare SaaS","Remote EU","Support"],salary:"€28–38K",currency:"eur",career:"https://nordhealth.com/careers/",region:"global",applied:false},
-  {id:6,name:"Pleo",country:"🇩🇰 Denmark / Remote EU",match:78,level:"high",desc:"Spend management fintech SaaS. Remote-friendly across EU. Technical Support Engineers work closely with product team. Previously applied — now with stronger profile.",tags:["Fintech","SaaS","Remote EU","Support"],salary:"€30–45K",currency:"eur",career:"https://www.pleo.io/en/careers",region:"netherlands",applied:false},
-  {id:7,name:"Apaleo",country:"🇩🇪 Germany / Remote",match:76,level:"high",desc:"Hotel PMS API platform. Berlin-based. API-first company — your Postman experience directly relevant. Previously applied — stronger profile now.",tags:["API Platform","Germany","Hospitality SaaS"],salary:"€28–40K",currency:"eur",career:"https://apaleo.com/careers",region:"germany",applied:false},
-  {id:8,name:"Leapsome",country:"🇩🇪 Germany / Remote",match:75,level:"high",desc:"HR SaaS platform. Berlin. Remote-first with EU preference. Support Engineers handle product issues cross-functionally.",tags:["HR SaaS","Germany","Remote","Support"],salary:"€28–42K",currency:"eur",career:"https://www.leapsome.com/company/careers",region:"germany",applied:false},
-  {id:9,name:"Babbel",country:"🇩🇪 Germany / Berlin",match:72,level:"med",desc:"Language learning SaaS. Berlin. L2 support roles for platform operations. Large enough to have structured support tiers.",tags:["EdTech SaaS","Germany","Support"],salary:"€28–38K",currency:"eur",career:"https://jobs.babbel.com/en/",region:"germany",applied:false},
-  {id:10,name:"Mambu",country:"🇩🇪 Germany / Remote EU",match:74,level:"med",desc:"Cloud banking SaaS. Remote-friendly. Technical support engineers investigate banking platform issues. SQL + API knowledge key.",tags:["Banking SaaS","Germany","Remote EU","SQL"],salary:"€32–46K",currency:"eur",career:"https://www.mambu.com/careers",region:"germany",applied:false},
-  {id:11,name:"Traffit",country:"🇵🇱 Poland / Remote",match:80,level:"high",desc:"Recruitment SaaS based in Poland. Actively hiring support roles. Polish company = easy work permit path for Indians. English environment.",tags:["HR SaaS","Poland","Support","Work Permit Friendly"],salary:"€20–30K PLN equivalent",currency:"eur",career:"https://traffit.com/en/career/",region:"poland",applied:false},
-  {id:12,name:"Netguru",country:"🇵🇱 Poland / Remote",match:77,level:"high",desc:"Large Polish tech company. IT support and application support roles. Huge India hiring track record. Great stepping stone.",tags:["IT Services","Poland","Support","India Friendly"],salary:"€22–35K",currency:"eur",career:"https://www.netguru.com/career",region:"poland",applied:false},
-  {id:13,name:"Boldare",country:"🇵🇱 Poland / Remote",match:74,level:"med",desc:"Product design & dev company in Poland. Technical support roles. Remote-first, English teams. Good India sponsorship history.",tags:["Product SaaS","Poland","Remote","Support"],salary:"€20–32K",currency:"eur",career:"https://www.boldare.com/career/",region:"poland",applied:false},
-  {id:14,name:"Channext",country:"🇳🇱 Netherlands / Remote",match:72,level:"med",desc:"Channel marketing SaaS. Netherlands-based, small team. Technical support engineers handle platform issues. Remote friendly.",tags:["Marketing SaaS","Netherlands","Support","Remote"],salary:"€28–38K",currency:"eur",career:"https://channext.com/careers/",region:"netherlands",applied:false},
-  {id:15,name:"Sendcloud",country:"🇳🇱 Netherlands / Remote EU",match:70,level:"med",desc:"Shipping & logistics SaaS. Eindhoven. Support engineers investigate shipping integrations. API + data knowledge useful.",tags:["Logistics SaaS","Netherlands","Support","API"],salary:"€28–40K",currency:"eur",career:"https://www.sendcloud.com/jobs/",region:"netherlands",applied:false},
-  {id:16,name:"Templafy",country:"🇩🇰 Denmark / Remote EU",match:70,level:"med",desc:"Document automation SaaS. Remote EU. Support engineering team handles enterprise client issues. Good escalation culture.",tags:["Document SaaS","Remote EU","Support"],salary:"€28–40K",currency:"eur",career:"https://www.templafy.com/careers/",region:"global",applied:false},
-  {id:17,name:"Hostinger",country:"🇱🇹 Lithuania / Remote",match:78,level:"high",desc:"Web hosting SaaS. Lithuania HQ, global remote. Technical Support Engineers. 97% Lithuania visa approval for Indians. Previously applied — stronger now.",tags:["Hosting SaaS","Lithuania","Remote","Support"],salary:"€18–28K",currency:"eur",career:"https://www.hostinger.com/careers",region:"global",applied:false},
-  {id:18,name:"Pipedrive",country:"🇪🇪 Estonia / Remote EU",match:75,level:"high",desc:"CRM SaaS. Estonia-based, remote EU. Strong support engineering culture. 98% Estonia visa approval for Indians. Known CRM = your CRM experience relevant.",tags:["CRM SaaS","Estonia","Remote EU","Support"],salary:"€25–38K",currency:"eur",career:"https://www.pipedrive.com/en/jobs",region:"global",applied:false},
-  {id:19,name:"Lokalise",country:"🌍 Remote / Global",match:76,level:"high",desc:"Localization SaaS. Fully distributed global team. Support Engineers hired globally via EOR. Async-first, USD pay.",tags:["SaaS","Global Remote","Support","USD Pay"],salary:"USD $30–45K",currency:"usd",career:"https://lokalise.com/careers",region:"global",applied:false},
-  {id:20,name:"Remote.com",country:"🌍 Remote / Global",match:80,level:"high",desc:"HR & EOR SaaS platform (the company that helps others hire globally). Hires Support Engineers worldwide. Pays in USD. Ironic but perfect fit.",tags:["HR SaaS","Global Remote","USD Pay","Support"],salary:"USD $35–50K",currency:"usd",career:"https://remote.com/careers",region:"global",applied:false},
+const companies=[
+  {id:1,n:"Veeva Systems",loc:"🇵🇱 Poland / Global Remote",m:88,l:"high",d:"Life sciences SaaS. Hires Product Support Engineers in Poland. Work Anywhere policy. Real L2 support roles.",t:["SaaS","Life Sciences","Work Anywhere"],s:"€28–42K / USD",c:"usd",r:"poland",url:"https://careers.veeva.com/job-search-results/?teams=Support"},
+  {id:2,n:"Mews Systems",loc:"🇨🇿 Czech / Remote EU",m:85,l:"high",d:"Hotel tech SaaS. Remote-first EU. Strong support engineering culture. Known to hire from India via EOR.",t:["Hospitality SaaS","Remote EU"],s:"€30–40K",c:"eur",r:"global",url:"https://www.mews.com/en/careers"},
+  {id:3,n:"Supabase",loc:"🌍 Fully Remote / Global",m:82,l:"high",d:"Open source database platform. Support Engineers hired globally. Fully remote async-first. Pay in USD.",t:["PostgreSQL","Global Remote"],s:"USD $40–60K",c:"usd",r:"global",url:"https://supabase.com/careers"},
+  {id:4,n:"Checkly",loc:"🇩🇪 Germany / Remote",m:80,l:"high",d:"API & E2E monitoring SaaS. Berlin-based remote-first. API monitoring = your Postman skills shine here.",t:["API Monitoring","Germany","Remote"],s:"€30–45K",c:"eur",r:"germany",url:"https://www.checklyhq.com/jobs/"},
+  {id:5,n:"Nordhealth",loc:"🇫🇮 Finland / Remote EU",m:82,l:"high",d:"Healthcare SaaS across Nordics. Remote EU roles. Strong support engineering team. Firebase/cloud stack.",t:["Healthcare SaaS","Remote EU"],s:"€28–38K",c:"eur",r:"global",url:"https://nordhealth.com/careers/"},
+  {id:6,n:"Pleo",loc:"🇩🇰 Denmark / Remote EU",m:78,l:"high",d:"Spend management fintech SaaS. Remote-friendly EU. Previously applied — now with much stronger profile.",t:["Fintech","Remote EU"],s:"€30–45K",c:"eur",r:"netherlands",url:"https://www.pleo.io/en/careers"},
+  {id:7,n:"Apaleo",loc:"🇩🇪 Germany / Remote",m:76,l:"high",d:"Hotel PMS API platform. API-first company — your Postman experience directly relevant. Previously applied.",t:["API Platform","Germany"],s:"€28–40K",c:"eur",r:"germany",url:"https://apaleo.com/careers"},
+  {id:8,n:"Leapsome",loc:"🇩🇪 Germany / Remote",m:75,l:"high",d:"HR SaaS platform. Berlin. Remote-first EU preference. Support Engineers handle product issues.",t:["HR SaaS","Germany","Remote"],s:"€28–42K",c:"eur",r:"germany",url:"https://www.leapsome.com/company/careers"},
+  {id:9,n:"Babbel",loc:"🇩🇪 Germany / Berlin",m:72,l:"med",d:"Language learning SaaS. Berlin. L2 support roles for platform operations. Structured support tiers.",t:["EdTech SaaS","Germany"],s:"€28–38K",c:"eur",r:"germany",url:"https://jobs.babbel.com/en/"},
+  {id:10,n:"Mambu",loc:"🇩🇪 Germany / Remote EU",m:74,l:"med",d:"Cloud banking SaaS. Remote-friendly. Support engineers investigate banking platform issues. SQL+API key.",t:["Banking SaaS","Germany","SQL"],s:"€32–46K",c:"eur",r:"germany",url:"https://www.mambu.com/careers"},
+  {id:11,n:"Traffit",loc:"🇵🇱 Poland / Remote",m:80,l:"high",d:"Recruitment SaaS Poland. Actively hiring support. Polish company = easy work permit path for Indians.",t:["HR SaaS","Poland","Work Permit"],s:"€20–30K",c:"eur",r:"poland",url:"https://traffit.com/en/career/"},
+  {id:12,n:"Netguru",loc:"🇵🇱 Poland / Remote",m:77,l:"high",d:"Large Polish tech company. IT support roles. Huge India hiring track record. Great stepping stone to EU.",t:["IT Services","Poland","India Friendly"],s:"€22–35K",c:"eur",r:"poland",url:"https://www.netguru.com/career"},
+  {id:13,n:"Boldare",loc:"🇵🇱 Poland / Remote",m:74,l:"med",d:"Product design & dev company in Poland. Remote-first, English teams. Good India sponsorship history.",t:["Product SaaS","Poland","Remote"],s:"€20–32K",c:"eur",r:"poland",url:"https://www.boldare.com/career/"},
+  {id:14,n:"Channext",loc:"🇳🇱 Netherlands / Remote",m:72,l:"med",d:"Channel marketing SaaS. Netherlands-based, small team. Technical support engineers handle platform issues.",t:["Marketing SaaS","Netherlands"],s:"€28–38K",c:"eur",r:"netherlands",url:"https://channext.com/careers/"},
+  {id:15,n:"Sendcloud",loc:"🇳🇱 Netherlands / Remote EU",m:70,l:"med",d:"Shipping & logistics SaaS. Eindhoven. Support engineers investigate shipping integrations. API useful.",t:["Logistics SaaS","Netherlands"],s:"€28–40K",c:"eur",r:"netherlands",url:"https://www.sendcloud.com/jobs/"},
+  {id:16,n:"Templafy",loc:"🇩🇰 Denmark / Remote EU",m:70,l:"med",d:"Document automation SaaS. Remote EU. Support engineering team handles enterprise client issues.",t:["Document SaaS","Remote EU"],s:"€28–40K",c:"eur",r:"global",url:"https://www.templafy.com/careers/"},
+  {id:17,n:"Hostinger",loc:"🇱🇹 Lithuania / Remote",m:78,l:"high",d:"Web hosting SaaS. Lithuania HQ, global remote. 97% Lithuania visa approval for Indians. Previously applied.",t:["Hosting SaaS","Lithuania","Remote"],s:"€18–28K",c:"eur",r:"global",url:"https://www.hostinger.com/careers"},
+  {id:18,n:"Pipedrive",loc:"🇪🇪 Estonia / Remote EU",m:75,l:"high",d:"CRM SaaS. Estonia-based remote EU. 98% Estonia visa approval for Indians. Your CRM experience relevant.",t:["CRM SaaS","Estonia","Remote EU"],s:"€25–38K",c:"eur",r:"global",url:"https://www.pipedrive.com/en/jobs"},
+  {id:19,n:"Lokalise",loc:"🌍 Remote / Global",m:76,l:"high",d:"Localization SaaS. Fully distributed global team. Support Engineers hired globally via EOR. Async-first.",t:["SaaS","Global Remote","USD Pay"],s:"USD $30–45K",c:"usd",r:"global",url:"https://lokalise.com/careers"},
+  {id:20,n:"Remote.com",loc:"🌍 Remote / Global",m:80,l:"high",d:"HR & EOR SaaS. Hires Support Engineers worldwide. Pays in USD. They help others hire globally — perfect fit.",t:["HR SaaS","Global Remote","USD"],s:"USD $35–50K",c:"usd",r:"global",url:"https://remote.com/careers"},
 ];
 
-// ── Render skill bars ──
-const sb = document.getElementById('skill-bars');
+// Render skill bars
+const sb=document.getElementById('skill-bars');
 skills.forEach(s=>{
-  sb.innerHTML+=`<div class="skill-row">
-    <div class="skill-lbl">${s.name}</div>
-    <div class="bar-wrap"><div class="bar" style="width:${s.pct}%;background:${s.color}"></div></div>
-    <div class="skill-pct" style="color:${s.color}">${s.pct}%</div>
-  </div>`;
+  const el=document.createElement('div');
+  el.className='skill-row';
+  el.innerHTML=`<div class="skill-lbl" title="${s.n}">${s.n}</div><div class="bar-wrap"><div class="bar" style="width:0%;background:${s.c}" data-w="${s.p}"></div></div><div class="skill-pct" style="color:${s.c}">${s.p}%</div>`;
+  sb.appendChild(el);
 });
+// Animate bars on load
+setTimeout(()=>{
+  document.querySelectorAll('.bar').forEach(b=>{b.style.width=b.dataset.w+'%'});
+},200);
 
-// ── ATS Tags ──
-document.getElementById('ats-pass').innerHTML = atsPass.map(t=>`<span class="tag pass">${t}</span>`).join('');
-document.getElementById('ats-warn').innerHTML = atsWarn.map(t=>`<span class="tag warn">${t}</span>`).join('');
-document.getElementById('ats-miss').innerHTML = atsMiss.map(t=>`<span class="tag miss">${t}</span>`).join('');
+// ATS tags
+document.getElementById('tp').innerHTML=atsP.map(t=>`<span class="tag p">${t}</span>`).join('');
+document.getElementById('tw').innerHTML=atsW.map(t=>`<span class="tag w">${t}</span>`).join('');
+document.getElementById('tm').innerHTML=atsM.map(t=>`<span class="tag m">${t}</span>`).join('');
 
-// ── State ──
-let appliedIds = JSON.parse(localStorage.getItem('prem_applied')||'[]');
-let currentFilter = 'all';
-let currentSearch = '';
+// State
+let applied=JSON.parse(localStorage.getItem('prem_v2')||'[]');
+let curF='all',curS='';
 
-function saveApplied(){localStorage.setItem('prem_applied',JSON.stringify(appliedIds));}
-function isApplied(id){return appliedIds.includes(id);}
+function saveA(){localStorage.setItem('prem_v2',JSON.stringify(applied));}
 
 function renderCards(list){
-  const g = document.getElementById('company-grid');
+  const g=document.getElementById('grid');
   g.innerHTML='';
+  if(!list.length){g.innerHTML='<p style="color:var(--gray);font-size:.85rem;padding:1rem">No companies match this filter.</p>';return;}
   list.forEach(c=>{
-    const app = isApplied(c.id);
-    g.innerHTML+=`
-    <div class="card${app?' applied':''}" id="card-${c.id}" data-region="${c.region}" data-level="${c.level}" data-currency="${c.currency}" data-name="${c.name.toLowerCase()}">
-      ${app?'<span class="applied-tag">✓ Applied</span>':''}
+    const app=applied.includes(c.id);
+    const div=document.createElement('div');
+    div.className='card'+(app?' applied':'');
+    div.innerHTML=`
+      ${app?'<span class="app-tag">✓ Applied</span>':''}
       <div class="card-head">
-        <div>
-          <div class="card-name">${c.name}</div>
-          <div class="card-country">${c.country}</div>
-        </div>
-        <span class="match-badge ${c.level}">${c.match}% match</span>
+        <div><div class="card-name">${c.n}</div><div class="card-country">${c.loc}</div></div>
+        <span class="mbadge ${c.l}">${c.m}% match</span>
       </div>
-      <div class="card-desc">${c.desc}</div>
-      <div class="card-tags">${c.tags.map(t=>`<span class="card-tag">${t}</span>`).join('')}</div>
+      <div class="card-desc">${c.d}</div>
+      <div class="card-tags">${c.t.map(x=>`<span class="ctag">${x}</span>`).join('')}</div>
       <div class="card-footer">
-        <span class="salary">💰 ${c.salary}</span>
+        <span class="salary">💰 ${c.s}</span>
         <div class="btn-row">
-          <a class="btn btn-career" href="${c.career}" target="_blank">🔗 Careers Page</a>
-          <button class="btn btn-log" onclick="logApp(${c.id},'${c.name}','${c.career}')">📋 Log Application</button>
+          <a class="btn btn-c" href="${c.url}" target="_blank">🔗 Apply</a>
+          <button class="btn btn-l" onclick="logApp(${c.id},'${c.n}','${c.url}','${c.loc}')">📋 Log</button>
         </div>
-      </div>
-    </div>`;
+      </div>`;
+    g.appendChild(div);
   });
   updateStats();
 }
 
-function filter(type, btn){
-  currentFilter = type;
-  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
-  if(btn) btn.classList.add('active');
-  applyFilters();
+function filt(type,btn){
+  curF=type;
+  document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  applyF();
 }
 
-function search(val){
-  currentSearch = val.toLowerCase();
-  applyFilters();
-}
+function srch(v){curS=v.toLowerCase();applyF();}
 
-function applyFilters(){
-  let list = companies.filter(c=>{
-    const nameMatch = c.name.toLowerCase().includes(currentSearch) || c.desc.toLowerCase().includes(currentSearch);
-    if(!nameMatch) return false;
-    if(currentFilter==='all') return true;
-    if(currentFilter==='high') return c.level==='high';
-    if(currentFilter==='germany') return c.region==='germany';
-    if(currentFilter==='poland') return c.region==='poland';
-    if(currentFilter==='netherlands') return c.region==='netherlands';
-    if(currentFilter==='global') return c.region==='global';
-    if(currentFilter==='usd') return c.currency==='usd';
-    return true;
+function applyF(){
+  let list=companies.filter(c=>{
+    const nm=c.n.toLowerCase().includes(curS)||c.d.toLowerCase().includes(curS);
+    if(!nm)return false;
+    if(curF==='all')return true;
+    if(curF==='high')return c.l==='high';
+    if(curF==='usd')return c.c==='usd';
+    return c.r===curF;
   });
   renderCards(list);
 }
 
-function logApp(id, name, career){
-  const date = new Date().toLocaleDateString('en-GB');
-  const text = `${name}\t${date}\tApplied\t${career}`;
-  navigator.clipboard.writeText(text).then(()=>{
-    showToast(`Copied "${name}" details — paste into your Google Sheet!`);
-  }).catch(()=>{
-    showToast(`Open your Sheet and log: ${name} | ${date}`);
-  });
-  window.open(SHEET, '_blank');
-  if(!appliedIds.includes(id)){
-    appliedIds.push(id);
-    saveApplied();
-  }
-  setTimeout(()=>{ applyFilters(); },500);
-}
-
-function showToast(msg){
-  const t = document.getElementById('toast');
-  t.textContent = '✅ '+msg;
-  t.style.display='block';
-  setTimeout(()=>{ t.style.display='none'; },3500);
+function logApp(id,name,url,loc){
+  const date=new Date().toLocaleDateString('en-GB');
+  const text=`${name}\t${date}\tApplied\t${loc}\t${url}`;
+  navigator.clipboard.writeText(text).catch(()=>{});
+  window.open(SHEET,'_blank');
+  if(!applied.includes(id)){applied.push(id);saveA();}
+  toast(`✅ "${name}" logged — paste into your Sheet`);
+  setTimeout(applyF,600);
 }
 
 function updateStats(){
-  const app = appliedIds.length;
-  document.getElementById('s-applied').textContent = app;
-  document.getElementById('applied-badge').textContent = `${app} applied`;
-  document.getElementById('s-high').textContent = companies.filter(c=>c.level==='high').length;
+  const a=applied.length;
+  document.getElementById('s3').textContent=a;
+  document.getElementById('hb-applied').textContent=a+' applied';
+  document.getElementById('hb-total').textContent=companies.length+' companies';
+  document.getElementById('s1').textContent=companies.length;
+  document.getElementById('s2').textContent=companies.filter(c=>c.l==='high').length;
+}
+
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.style.display='block';
+  setTimeout(()=>t.style.display='none',3000);
+}
+
+// AI SCOUT
+let lastRun=localStorage.getItem('prem_ai_last');
+if(lastRun)document.getElementById('ai-status').textContent='Last run: '+lastRun;
+
+async function runAIScout(){
+  const btn=document.getElementById('ai-btn');
+  const status=document.getElementById('ai-status');
+  const result=document.getElementById('ai-result');
+  const timer=document.getElementById('ai-timer');
+
+  // Check 10-day cooldown
+  if(lastRun){
+    const diff=(Date.now()-new Date(lastRun).getTime())/(1000*60*60*24);
+    if(diff<10){
+      const rem=Math.ceil(10-diff);
+      timer.textContent=`⏳ Next run available in ${rem} day${rem>1?'s':''} (cooldown: every 10 days)`;
+      toast('⏳ AI Scout runs every 10 days. Come back in '+rem+' days!');
+      return;
+    }
+  }
+
+  btn.disabled=true;
+  btn.innerHTML='<span class="spinner"></span>Searching...';
+  result.style.display='none';
+  status.textContent='Searching for new L2 Support opportunities...';
+
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-6',
+        max_tokens:1000,
+        messages:[{role:'user',content:`You are a job search assistant for Prem Rathod, an L2 Application Support Engineer from India with 3+ years experience. His skills: GCP Cloud Logging, MySQL, Firebase Firestore, Cassandra, Postman REST API, SQL JOINs, Linux SSH/SCP/vi/htop, Jira, CRM operations, SaaS incident investigation. He wants remote-first jobs in Europe (Germany, Poland, Netherlands) or global remote paying EUR or USD, with onsite relocation possible after 1 year. Target roles: L2 Application Support Engineer, Production Support Engineer, Technical Support Engineer.
+
+List 5 specific companies (NOT already on this list: Veeva, Mews, Supabase, Checkly, Nordhealth, Pleo, Apaleo, Leapsome, Babbel, Mambu, Traffit, Netguru, Boldare, Channext, Sendcloud, Templafy, Hostinger, Pipedrive, Lokalise, Remote.com) that would be a good match. For each give: Company name, country, why it matches his profile, estimated salary in EUR/USD, and careers page URL. Keep it concise.`}]
+      })
+    });
+    const data=await res.json();
+    const text=data.content[0].text;
+    result.textContent=text;
+    result.style.display='block';
+    lastRun=new Date().toLocaleDateString('en-GB');
+    localStorage.setItem('prem_ai_last',lastRun);
+    status.textContent='Last run: '+lastRun;
+    timer.textContent='Next run available in 10 days';
+    toast('✅ AI Scout found new leads!');
+  }catch(e){
+    result.textContent='Could not connect to AI. Check your internet connection and try again.';
+    result.style.display='block';
+  }
+  btn.disabled=false;
+  btn.innerHTML='🔍 Find New Companies';
+}
+
+function clearAIResult(){
+  document.getElementById('ai-result').style.display='none';
+  document.getElementById('ai-result').textContent='';
 }
 
 // Init
